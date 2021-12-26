@@ -1,14 +1,12 @@
-def check_dimension(dimension):
-    global m
-    global n
+def check_type(user_in):
     try:
-        d = dimension.split()
+        d = user_in.split()
         if len(d) > 2:
             print("Invalid dimensions!")
             return False
         else:
-            m = int(d[0])
-            n = int(d[1])
+            user_in_1 = int(d[0])
+            user_in_2 = int(d[1])
     except ValueError:
         print("Invalid dimensions!")
         return False
@@ -16,61 +14,52 @@ def check_dimension(dimension):
         print("Invalid dimensions!")
         return False
     else:
-        if m > 0 and n > 0:
-            return True
+        return [user_in_1, user_in_2]
+
+
+def check_dimension():
+    while True:
+        dimension = input("Enter your board dimensions: ")
+        dimension = check_type(dimension)
+        if dimension[0] > 0 and dimension[1] > 0:
+            return dimension
+            break
         else:
             print("Invalid dimensions!")
-            return False
+            return None
 
 
-def check_position(position):
-    global x
-    global y
-    try:
-        p = position.split()
-        if len(p) > 2:
-            print("Invalid position!")
-            return False
-        else:
-            x = int(p[0])
-            y = int(p[1])
-    except ValueError:
-        print("Invalid position!")
-        return False
-    except IndexError:
-        print("Invalid position!")
-        return False
-    else:
-        if 1 <= x <= m and 1 <= y <= n:
-            return True
+def check_position(dimension):
+    while True:
+        position = input("Enter the knight's starting position: ")
+        position = check_type(position)
+        if 1 <= position[0] <= dimension[0] and 1 <= position[1] <= dimension[1]:
+            return position
         else:
             print("Invalid position!")
-            return False
+            return None
 
 
 def print_board(board):
     bottom = [str(i) for i in range(1, m + 1)]
-    print(f" {'-' * (3 + 3 * m)}")
+    print(f" {'-' * (3 + 3 * len(board))}")
     for i in range(len(board), 0, -1):
         print(f"{i}| {' '.join(board[i-1])} |")
-    print(f" {'-' * (3 + 3 * m)}")
+    print(f" {'-' * (3 + 3 * len(board))}")
     print(f"    {'  '.join(bottom)}")
 
 
-m = 0
-n = 0
-while True:
-    dimension_in = input("Enter your board dimensions: ")
-    if check_dimension(dimension_in):
-        break
+def build_board(dimension, position):
+    m = dimension[0]
+    n = dimension[1]
+    x = position[0]
+    y = position[1]
+    board = [['__' for a in range(m)] for b in range(n)]
+    board[y - 1][x - 1] = " X"
+    return board
 
-c_board = [['__' for x in range(m)] for y in range(n)]
-x = 0
-y = 0
 
-while True:
-    position_in = input("Enter the knight's starting position: ")
-    if check_position(position_in):
-        break
-c_board[y - 1][x - 1] = " X"
+dimension_in = check_dimension()
+position_in = check_position(dimension_in)
+c_board = build_board(dimension_in, position_in)
 print_board(c_board)
