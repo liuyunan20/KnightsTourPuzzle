@@ -62,9 +62,10 @@ def build_board(position, dimension):
     board[y - 1][x - 1] = " X"
     next_positions = possible_moves(position, dimension)
     for next_position in next_positions:
+        predict_positions = possible_moves(next_position, dimension)
         next_x = next_position[0]
         next_y = next_position[1]
-        board[next_y - 1][next_x - 1] = " O"
+        board[next_y - 1][next_x - 1] = f" {len(predict_positions) - 1}"
     return board
 
 
