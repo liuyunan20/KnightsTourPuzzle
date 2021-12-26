@@ -1,51 +1,55 @@
-def check_type(user_in):
+def print_invalid(invalid_type):
+    print(f"Invalid {invalid_type}!")
+
+
+def check_type(user_in, input_type):
+    result = None
     try:
         d = user_in.split()
         if len(d) > 2:
-            print("Invalid dimensions!")
-            return False
+            print_invalid(input_type)
         else:
             user_in_1 = int(d[0])
             user_in_2 = int(d[1])
     except ValueError:
-        print("Invalid dimensions!")
-        return False
+        print_invalid(input_type)
     except IndexError:
-        print("Invalid dimensions!")
-        return False
+        print_invalid(input_type)
     else:
-        return [user_in_1, user_in_2]
+        result = [user_in_1, user_in_2]
+    return result
 
 
 def check_dimension():
     while True:
         dimension = input("Enter your board dimensions: ")
-        dimension = check_type(dimension)
-        if dimension[0] > 0 and dimension[1] > 0:
+        dimension = check_type(dimension, "dimensions")
+        if dimension is None:
+            continue
+        elif dimension[0] > 0 and dimension[1] > 0:
             return dimension
-            break
         else:
-            print("Invalid dimensions!")
-            return None
+            print_invalid("dimensions")
 
 
 def check_position(dimension):
     while True:
         position = input("Enter the knight's starting position: ")
-        position = check_type(position)
-        if 1 <= position[0] <= dimension[0] and 1 <= position[1] <= dimension[1]:
+        position = check_type(position, "positions")
+        if position is None:
+            continue
+        elif 1 <= position[0] <= dimension[0] and 1 <= position[1] <= dimension[1]:
             return position
         else:
-            print("Invalid position!")
-            return None
+            print_invalid("positions")
 
 
 def print_board(board):
-    bottom = [str(i) for i in range(1, m + 1)]
-    print(f" {'-' * (3 + 3 * len(board))}")
+    bottom = [str(i) for i in range(1, len(board[0]) + 1)]
+    print(f" {'-' * (3 + 3 * len(board[0]))}")
     for i in range(len(board), 0, -1):
         print(f"{i}| {' '.join(board[i-1])} |")
-    print(f" {'-' * (3 + 3 * len(board))}")
+    print(f" {'-' * (3 + 3 * len(board[0]))}")
     print(f"    {'  '.join(bottom)}")
 
 
