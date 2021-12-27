@@ -65,10 +65,6 @@ def start_board(position, dimension):
 
 def display_board(cur_position, cur_board):
     dp_board = [[x for x in y] for y in cur_board]
-    x = cur_position[0]
-    y = cur_position[1]
-    m = len(cur_board[0])
-    n = len(cur_board)
     predict_move(cur_position, dp_board)
     return dp_board
 
@@ -109,15 +105,15 @@ def possible_moves(cur_position, cur_board):
 
 
 def process_move(pre_position, cur_board):
+    cur_position = input("Enter your next move: ")
     while True:
-        cur_position = input("Enter your next move: ")
         cur_position = check_type(cur_position, "move")
         if cur_position is None:
             continue
         elif cur_position in possible_moves(pre_position, cur_board):
             return cur_position
         else:
-            print_invalid("move")
+            cur_position = input("Invalid move! Enter your next move: ")
 
 
 def update_board(cur_position, cur_board):
@@ -160,14 +156,61 @@ def check_end(cur_position, cur_board):
         return False
 
 
+def find_answer(position, board):
+    dp_board = [[x for x in y] for y in board]
+    moves = possible_moves(position, dp_board)
+    update_board(position, dp_board)
+    if not moves:
+        if check_win(dp_board):
+            exist_answer = [position]
+        else:
+            exist_answer = []
+#        print(exist_answer)
+        return exist_answer
+    for move in moves:
+        exist_answer = find_answer(move, dp_board)
+# if exist_answer is empty return empty list, if not empty add current position as trace
+        if exist_answer:
+            exist_answer.append(move)
+            return exist_answer
+    return []
+
+
+def add_answer(position, cur_board, order):
+    x = position[0]
+    y = position[1]
+    if order < 10:
+        cur_board[y - 1][x - 1] = f" {order}"
+    elif order >= 10:
+        cur_board[y - 1][x - 1] = f"{order}"
+    return cur_board
+
+
 dimension_in = check_dimension()
 c_position = check_position(dimension_in)
 c_board = start_board(c_position, dimension_in)
 while True:
-    d_board = display_board(c_position, c_board)
-    print_board(d_board)
-    p_position = [x for x in c_position]
-    c_position = process_move(p_position, c_board)
-    c_board = update_board(c_position, c_board)
-    if check_end(c_position, c_board):
+    a = input("Do you want to try the puzzle? (y/n): ")
+    if a == "y" or a == "n":
         break
+    else:
+        print("Invalid input!")
+answer = find_answer(c_position, c_board)
+if not answer:
+    print("No solution exists!")
+else:
+    if a == "y":
+        while True:
+            d_board = display_board(c_position, c_board)
+            print_board(d_board)
+            p_position = [x for x in c_position]
+            c_position = process_move(p_position, c_board)
+            c_board = update_board(c_position, c_board)
+            if check_end(c_position, c_board):
+                break
+    elif a == "n":
+        a_board = add_answer(c_position, c_board, 1)
+        for i in range(len(answer)-1, 0, -1):
+            a_board = add_answer(answer[i], c_board, len(answer) - i + 1)
+        print("Here's the solution!")
+        print_board(a_board)
